@@ -16,7 +16,7 @@ def index():
     print('------ inside /')
     return render_template('index.html')
 
-# ========================================== LOGIN ====================
+# ========================================== LOGIN =========================
 @app.route('/login', methods=['post'])
 def login():
     print("\n @@@@@@@@ SERVER > LOGIN : POST DATA - EMAIL: ")
@@ -126,7 +126,7 @@ def registration():
         errorValidation = True
 
     print('!!!!! ARE THERE ERRORS IN THE REGISTATION ? = ', errorValidation)
-    #========= final validation
+    #========= final validation ======================
     if errorValidation == False:
         if request.form['password'] == request.form['confirm_password']:
             print('!!!! PW match!')
@@ -141,7 +141,7 @@ def registration():
                 'created_at': '',
                 'updated_at': '' 
             }
-            # write pass the query
+            # write pass the query !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             final_query = "INSERT INTO users (name, email, password, created_at, updated_at) VALUES (%(name)s, %(email)s, %(password_hash)s, NOW(), NOW());"
             # now pass it to the db and execute it
             result = mysql.query_db(final_query, final_data)
@@ -159,6 +159,7 @@ def registration():
     #         print('###### if you reach this point, all validations passed BUT not the PW match :( ')
     return redirect('/')
 
+# ================================== WALL ====================================
 @app.route('/wall')
 def wall():
     print('\n ================ inside /wall ================')
@@ -171,16 +172,17 @@ def wall():
         # print(results[0]['user_id'])
 
         # query to get name, content, created at JOIN 2 tables users and messages to post on the html thru a loop
-        query_name_post = "SELECT users.name, messages.content, messages.created_at FROM users JOIN messages ON users.id = messages.user_id;"
+        #display messages & users by joining the tables
+        query_name_post = "SELECT users.id, users.name, messages.content, messages.created_at FROM users JOIN messages ON users.id = messages.user_id;"
         results = mysql.query_db(query_name_post) # returns an array of the objs requested in the query
         print(' =-=-=--=--=--=- results from name and comment JOIN', results)
-
         return render_template('wall.html', name=session['name'], messagesHtml=results)
     else:
         print('@@@@@@@@@ someone tried to access wall without being logged in')
         print('@@@@@@ redirecting to /')
         return redirect('/')
 
+# ================================== POST MESSAGE ==================================
 @app.route('/postmessage', methods=['post'])
 def postmessage():
     print('\n ======= inside /postmessage ========')
@@ -190,6 +192,14 @@ def postmessage():
     result = mysql.query_db(query, data)
     return redirect('/wall')
 
+# ================================== POST COMMENT REPLY ==================================
+@app.route('/postcomment', methods=['post'])
+def postcomment():
+    print('\n ========== inside /post commnet REPLY ==========')
+    print('@@@@@@@@ this is the reply received by the used', request.form['comment'])
+
+    return redirect('/wall')
+# ================================== LOGOUT ==================================
 @app.route('/logout')
 def logout():
     session.clear()
