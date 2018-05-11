@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>The Wall</title>
+    <style>
+        /* *{
+            outline: 1px dotted red;
+        } */
+        body {
+            width: 720px;
+        }
+        div.comments, textarea.comment, .comment {
+            margin-left: 100px;
+        }
+        textarea.message {
+            width: 80%;
+        }
+        textarea.comment {
+            width: 70%;
+        }
+        /* .messages{
+            background-color: antiquewhite;
+        } */
+        .message{
+            background-color: aliceblue;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>The Wall</h1>
+    <h5>hello {{ name }}!</h5>
+        <a href="/logout">Logout</a>
+    <h3>Create a Message</h3>
+    <form method="post" action='/postmessage'>
+        <textarea class='message' name='content'></textarea>
+        <input type="submit" name=''>
+    </form>
+
+    <h3>Messages:</h3>
+
+    <div class='messages'>
+        <!-- message loop -->
+        {% for message in messagesHtml %}
+        
+        <div class='message'>
+            <h4> Message by: {{ message['name'] }} date:{{ message['created_at'] }}</h4>
+            <p>{{ message['content'] }}</p>
+
+            <!-- <div class='comments'> -->
+
+                <!-- comment loop -->
+                <!-- <div class='comment'> -->
+                    <!-- <h4>Comment: James Johnson Tue Mar 10 2:32 PM</h4> -->
+                    <!-- <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.psum dolor sit amet consectetur adipisicing Obcaecatifacere quasi </p> -->
+                <!-- </div> -->
+                <!-- END comment loop -->
+
+            <!-- </div> -->
+
+            <!-- <h3 class='comment'>Comment:</h3> -->
+            <!-- <form method="post" action='/process'> -->
+                <!-- <textarea class='comment' name='content'></textarea> -->
+                <!-- <input type="submit" name=''> -->
+            <!-- </form> -->
+        </div>
+        {% endfor %}
+        <!-- END: Message LOOP -->
+
+    </div>
+</body>
+</html>

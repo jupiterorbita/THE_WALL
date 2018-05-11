@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>The Wall</title>
+    <style>
+    input{
+        display: block;
+    }
+    .error{
+        color: red;
+    }
+    </style>
+
+</head>
+<body>
+    <h2>Login</h2>
+
+    <!-- <a href="/">Go to Home</a> -->
+
+    <form method="POST" action="/login">
+        
+        {% with errors = get_flashed_messages(category_filter=["login"]) %}
+        {% if errors %}
+            {%- for msg in errors %}
+                <span class="error">{{ msg }}</span>
+            {% endfor -%}
+        {% endif %}
+        {% endwith %}
+        <br>
+        <label>Email : </label>
+        <input type="text" name='email' value=''> <!-- value is for setting an input so you dont have to type it in again-->
+        <label>Password : </label>
+        <input type="password" name="password" value=''>
+        <input type="submit">
+    </form>
+    <hr>
+    <h2>Register</h2>
+    <form action="/registration" method="POST">
+       
+        {% with errors = get_flashed_messages(category_filter=["register"]) %}
+        {% if errors %}
+            {%- for msg in errors %}
+                <span class="error">{{ msg }}</span>
+                <br>
+            {% endfor -%}
+        {% endif %}
+        {% endwith %}
+    
+        <label>Name :</label>
+        <input type='text' name="name">
+        <label>Email : </label>
+        <input type="text" name='email'>
+        <label>Password :</label>
+        <input type="password" name="password">
+        <lable>Confirm Password :</lable>
+        <input type="password" name="confirm_password">
+        <input type="submit">
+    </form>
+    
+    
+</body>
+</html>
