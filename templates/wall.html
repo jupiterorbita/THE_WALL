@@ -14,7 +14,7 @@
             width: 720px;
         }
         div.comments, textarea.comment, .comment {
-            margin-left: 100px;
+            margin-left: 80px;
         }
         textarea.message {
             width: 80%;
@@ -27,6 +27,21 @@
         } */
         .message{
             background-color: aliceblue;
+        }
+        .comment{
+            background-color: beige;
+        }
+        h3{
+           margin-top: 2px;
+           margin-bottom: 5px; 
+        }
+        h4{
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        p{
+            margin-top: 8px;
+            margin-bottom: 8px;
         }
     </style>
 </head>
@@ -54,22 +69,39 @@
             <h4> Message by: {{ message['name'] }} date:{{ message['created_at'] }}</h4>
             <p>{{ message['content'] }}</p>
 
-            <!-- <div class='comments'> -->
+
+
+
+
+
+
+            <div class='comments'>
 
                 <!-- comment loop -->
-                <!-- <div class='comment'> -->
-                    <!-- <h4>Comment: James Johnson Tue Mar 10 2:32 PM</h4> -->
-                    <!-- <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.psum dolor sit amet consectetur adipisicing Obcaecatifacere quasi </p> -->
-                <!-- </div> -->
+                {% for comment in comment_results %}
+                    {% if comment[comment.message_id] == message[messages_id] %}
+
+                <div class='comment'> {{ comment['created_at']}} -- }
+                    <h4>Comment: James Johnson </h4>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.psum dolor sit amet consectetur adipisicing Obcaecatifacere quasi </p>
+                </div>
+                   {% endif %}
+                {% endfor %}
                 <!-- END comment loop -->
 
-            <!-- </div> -->
+            </div>
 
-            <!-- <h3 class='comment'>Comment:</h3> -->
-            <!-- <form method="post" action='/process'> -->
-                <!-- <textarea class='comment' name='content'></textarea> -->
-                <!-- <input type="submit" name=''> -->
-            <!-- </form> -->
+            <h3 class='comment'>Comment:</h3>
+            <form method="post" action='/postcomment'>
+                <input type="hidden" name='message_id_from_post' value='{{ message['id']}}'>
+                <textarea class='comment' name='content2'></textarea>
+                <input type="submit" name=''>
+            </form>
+
+
+
+
+
         </div>
         {% endfor %}
         <!-- END: Message LOOP -->

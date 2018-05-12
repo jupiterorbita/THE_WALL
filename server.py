@@ -173,14 +173,29 @@ def wall():
 
         # query to get name, content, created at JOIN 2 tables users and messages to post on the html thru a loop
         #display messages & users by joining the tables
-        query_name_post = "SELECT users.id, users.name, messages.content, messages.created_at FROM users JOIN messages ON users.id = messages.user_id;"
+        query_name_post = "SELECT messages.id AS messagesid, users.id, users.name, messages.content, messages.created_at FROM users JOIN messages ON users.id = messages.user_id;"
         results = mysql.query_db(query_name_post) # returns an array of the objs requested in the query
+        
+        
+
+        # message and commnet join
+        # query_comments = "SELECT comments.message_id AS message_id, comments.user_id AS comment_user_id, messages.user_id AS message_user_id, comments.content, comments.created_at FROM messages JOIN comments ON messages.id = comments.message_id;"
+
+        query_comments = "SELECT comments.message_id, comments.user_id, messages.user_id, comments.content, comments.created_at FROM messages JOIN comments ON messages.id = comments.message_id;"
+        results_comments = mysql.query_db(query_comments)
+        print('this is RESULTS_COMMENTS query ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ', results_comments)
+
         print(' =-=-=--=--=--=- results from name and comment JOIN', results)
-        return render_template('wall.html', name=session['name'], messagesHtml=results)
+        print('000000000000000000000 message_id =', results[0]['id'])
+        return render_template('wall.html', name=session['name'], messagesHtml=results, comment_results = results_comments)
     else:
         print('@@@@@@@@@ someone tried to access wall without being logged in')
         print('@@@@@@ redirecting to /')
         return redirect('/')
+
+
+
+
 
 # ================================== POST MESSAGE ==================================
 @app.route('/postmessage', methods=['post'])
@@ -192,13 +207,33 @@ def postmessage():
     result = mysql.query_db(query, data)
     return redirect('/wall')
 
+
+
+
+
+
 # ================================== POST COMMENT REPLY ==================================
 @app.route('/postcomment', methods=['post'])
 def postcomment():
     print('\n ========== inside /post commnet REPLY ==========')
-    print('@@@@@@@@ this is the reply received by the used', request.form['comment'])
+    print('@@@@@@@@ this is the reply received by the user :', request.form['content2'])
+    print('^^^^^^^^^ the message id of the post that its sitting on is '), request.form['message_id_from_post']
+    print('^^^^^^^^^^^^^^^^^^^^^')
 
+    data = {'user_id': session['id'], 'content': request.form['content2'], 'message_id': '', 'created_at':'', 'updated_at':''}
+    query = "INSERT INTO comments (user_id, content, message_id, created_at) VALUES (%(user_id)s, %(content)s, %(message_id)s, NOW());"
+    result = mysql.query_db(query, data)
     return redirect('/wall')
+
+
+
+
+
+
+
+
+
+
 # ================================== LOGOUT ==================================
 @app.route('/logout')
 def logout():
