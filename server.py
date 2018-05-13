@@ -10,10 +10,16 @@ mysql = connectToMySQL('wall-db')
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 print('\n','= = = server start = = = server.py ')
 
+# Python program to print
+# green text with red background
+from colorama import init
+from termcolor import colored
+init()
+print(colored('Hello, World!', 'green', 'on_red'))
 
 @app.route('/')
 def index():
-    print('------ inside /')
+    print(colored('------ inside /','green'))
     return render_template('index.html')
 
 # ========================================== LOGIN =========================
@@ -159,6 +165,7 @@ def registration():
     #         print('###### if you reach this point, all validations passed BUT not the PW match :( ')
     return redirect('/')
 
+
 # ================================== WALL ====================================
 @app.route('/wall')
 def wall():
@@ -175,42 +182,33 @@ def wall():
         #display messages & users by joining the tables
         query_name_post = "SELECT messages.id AS messagesid, users.id, users.name, messages.content, messages.created_at FROM users JOIN messages ON users.id = messages.user_id;"
         results = mysql.query_db(query_name_post) # returns an array of the objs requested in the query
-        
-        
 
-        # message and commnet join
-        # query_comments = "SELECT comments.message_id AS message_id, comments.user_id AS comment_user_id, messages.user_id AS message_user_id, comments.content, comments.created_at FROM messages JOIN comments ON messages.id = comments.message_id;"
-
-        query_comments = "SELECT comments.message_id, comments.user_id, messages.user_id, comments.content, comments.created_at FROM messages JOIN comments ON messages.id = comments.message_id;"
+       
+        query_comments = "SELECT comments.id AS comment_id, comments.message_id as comment_message_id, comments.user_id as comment_user_id, messages.user_id as message_user_id, comments.content as comment_content, comments.created_at FROM messages JOIN comments ON messages.id = comments.message_id;"
         results_comments = mysql.query_db(query_comments)
         print('this is RESULTS_COMMENTS query ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ', results_comments)
 
         print(' =-=-=--=--=--=- results from name and comment JOIN', results)
-        print('000000000000000000000 message_id =', results[0]['id'])
+        # this was giving me a tuple index out of range when i deleted the messages and comments rowns
+        # print('000000000000000000000 message_id =', results[0]['id'])
         return render_template('wall.html', name=session['name'], messagesHtml=results, comment_results = results_comments)
     else:
         print('@@@@@@@@@ someone tried to access wall without being logged in')
         print('@@@@@@ redirecting to /')
         return redirect('/')
 
-
-
-
-
 # ================================== POST MESSAGE ==================================
 @app.route('/postmessage', methods=['post'])
 def postmessage():
     print('\n ======= inside /postmessage ========')
     print('@@@@@@@@@@@@@@ this is the message the user types :\n', request.form['content'])
-    data ={'user_id': session['id'], 'content': request.form['content'], 'created_at':'','updated_at':''}
+    data = {
+        'user_id': session['id'],
+        'content': request.form['content']
+    }
     query = "INSERT INTO messages (user_id, content, created_at, updated_at) VALUES (%(user_id)s, %(content)s, NOW(), NOW());"
-    result = mysql.query_db(query, data)
+    mysql.query_db(query, data)
     return redirect('/wall')
-
-
-
-
-
 
 # ================================== POST COMMENT REPLY ==================================
 @app.route('/postcomment', methods=['post'])
@@ -219,10 +217,28 @@ def postcomment():
     print('@@@@@@@@ this is the reply received by the user :', request.form['content2'])
     print('^^^^^^^^^ the message id of the post that its sitting on is '), request.form['message_id_from_post']
     print('^^^^^^^^^^^^^^^^^^^^^')
+    print(request.form['message_id_from_post'])
 
-    data = {'user_id': session['id'], 'content': request.form['content2'], 'message_id': '', 'created_at':'', 'updated_at':''}
-    query = "INSERT INTO comments (user_id, content, message_id, created_at) VALUES (%(user_id)s, %(content)s, %(message_id)s, NOW());"
-    result = mysql.query_db(query, data)
+    data = {
+        'user_id': session['id'],
+        'content': request.form['content2'],
+        'message_id': request.form['message_id_from_post']
+    }
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    print(data)
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+
+    query = "INSERT INTO comments (user_id, content, message_id, created_at, updated_at) VALUES (%(user_id)s, %(content)s, %(message_id)s, NOW(), NOW());"
+    
+    print('\n= = = = = = = = ', query, '\n= = == == == == = ==')
+
+    mysql.query_db(query, data)
     return redirect('/wall')
 
 
@@ -240,5 +256,5 @@ def logout():
     session.clear()
     return redirect('/')
 
-if __name__=='__main__':
+if __name__ == '__main__':
     app.run(debug=True)

@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>The Wall</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
     <style>
-        /* *{
-            outline: 1px dotted red;
-        } */
+       
         body {
             width: 720px;
         }
@@ -43,6 +43,9 @@
             margin-top: 8px;
             margin-bottom: 8px;
         }
+        .red{
+            color: red;
+        }
     </style>
 </head>
 
@@ -64,43 +67,38 @@
     <div class='messages'>
         <!-- message loop -->
         {% for message in messagesHtml %}
-        
+        {{message.messagesid}}
         <div class='message'>
-            <h4> Message by: {{ message['name'] }} date:{{ message['created_at'] }}</h4>
+            <h4> USER_ID: {{ message['id'] }} - msg_id: {{ message['messagesid'] }} Message by: {{ message['name'] }} date:{{ message['created_at'] }}</h4>
             <p>{{ message['content'] }}</p>
 
 
-
-
-
-
+            <p class='red'>{{ message.messagesid }} </p>
 
             <div class='comments'>
 
-                <!-- comment loop -->
-                {% for comment in comment_results %}
-                    {% if comment[comment.message_id] == message[messages_id] %}
-
-                <div class='comment'> {{ comment['created_at']}} -- }
-                    <h4>Comment: James Johnson </h4>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.psum dolor sit amet consectetur adipisicing Obcaecatifacere quasi </p>
-                </div>
-                   {% endif %}
-                {% endfor %}
-                <!-- END comment loop -->
+<!-- comment loop -->
+{% for comment in comment_results %}
+<!-- @@@@@@@@@@@@@@@@@@@@@@@@@@ {{comment}} -->
+    {% if comment.comment_message_id == message.messagesid: %}
+        
+        <div class='comment'> commented at: {{ comment.created_at }} 
+            <h4>Comment by iser id: {{ comment.comment_user_id }} </h4>
+            <p>{{ comment.comment_content }} </p>
+        </div>
+    {% endif %}
+<!-- <p>=======================</p> -->
+{% endfor %}
+<!-- END comment loop -->
 
             </div>
 
             <h3 class='comment'>Comment:</h3>
             <form method="post" action='/postcomment'>
-                <input type="hidden" name='message_id_from_post' value='{{ message['id']}}'>
+                <input type="hidden" name='message_id_from_post' value='{{ message.messagesid }}'>
                 <textarea class='comment' name='content2'></textarea>
                 <input type="submit" name=''>
             </form>
-
-
-
-
 
         </div>
         {% endfor %}
